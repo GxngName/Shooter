@@ -28,6 +28,16 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = random.randrange(H)
         self.speedx = 0
 
+class Mob(pygame.sprite.Sprite):
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = pygame.Surface((30, 40))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randrange(WIDTH - self.rect.width)
+        self.rect.y = random.randrange(-100, -40)
+        self.speedy = random.randrange(1, 8)
+
 def update(self):
         self.speedx = 0
         keystate = pygame.key.get_pressed()
@@ -49,6 +59,12 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
+
+pygame.draw.line(win, color, start_pos = (x0, y0), end_pos = (x1, y1), width = 1)
+
+pygame.draw.rect(win, color, (top, left, width, height), width = 1)
+
+pygame.draw.circle(win, color, center = (x0, y0), radius = radius, width = 1)
 
 all_sprites.update()
 
