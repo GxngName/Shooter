@@ -4,7 +4,7 @@ import random
 pygame.init()
 pygame.mixer.init() 
 win = pygame.display.set_mode((600, 720))
-pygame.display.set_caption("Welcome to the club buddy!")
+pygame.display.set_caption("Welcome to the club!")
 background_color = (0,) * 3
 
 WIDTH = 600
@@ -56,10 +56,17 @@ all_sprites = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 
-while True:
+in_game = True
+
+while in_game:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            exit()
+            exit()   
+
+hits = pygame.sprite.spritecollide(player, tubes, True)
+if hits:
+    in_game = False
+    player.zero
 
 pygame.draw.line(win, color, start_pos = (x0, y0), end_pos = (x1, y1), width = 1)
 
@@ -70,6 +77,7 @@ pygame.draw.circle(win, color, center = (x0, y0), radius = radius, width = 1)
 all_sprites.update()
 
 screen.fill(BLACK)
+
 all_sprites.draw(screen)
 pygame.display.flip()
 
