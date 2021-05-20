@@ -19,13 +19,14 @@ YELLOW = (255, 255, 0)
 
             
 class Player(pygame.sprite.Sprite):
-    def __init__(self, *group):
-        super().__init__(*group)
-        self.image = load_image("ing.png")
-        self.image = pygame.transform.scale(self.image, (100,100))
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale(self.image, (50,38))
+        transColor = self.image.get_at((0, 0))
+        self.image.set_colorkey(transColor) 
         self.rect = self.image.get_rect()
-        self.rect.x = random.randrange(W)
-        self.rect.y = random.randrange(H)
+        self.rect.centerx = random.randrange(W)
+        self.rect.bottom = random.randrange(H)
         self.speedx = 0
 
 class Mob(pygame.sprite.Sprite):
