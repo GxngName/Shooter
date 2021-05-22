@@ -1,16 +1,12 @@
 import pygame
 import random
-
-pygame.init()
-pygame.mixer.init() 
-win = pygame.display.set_mode((600, 720))
-pygame.display.set_caption("Welcome to the club buddy!")
-background_color = (0,) * 3
+from os import path
 
 img_dir = path.join(path.dirname(__file__), 'img')
 
 WIDTH = 600
 HEIGHT = 720
+FPS = 60
 
 WHITE = (255,) * 3
 BLACK = (0,) *3
@@ -18,6 +14,25 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
+
+pygame.init()
+pygame.mixer.init() 
+win = pygame.display.set_mode((HEIGHT, WIDTH))
+pygame.display.set_caption("Welcome to the club buddy!")
+background_color = (0,) * 3
+
+def draw_text(surf, text, size, x, y):
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, WHITE)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
+
+
+def newmob():
+    m = Mob()
+    all_sprites.add(m)
+    mobs.add(m)
 
 
 class Player(pygame.sprite.Sprite):
@@ -44,6 +59,13 @@ class Player(pygame.sprite.Sprite):
             self.rect.right = WIDTH
         if self.rect.left < 0:
             self.rect.left = 0
+    
+    def shoot(self):
+        bullet = Bullet(self.rect.centerx, self.rect.top)
+        all_sprites.add(bullet)
+        bullets.add(bullet)
+        shoot_sound.play()
+
 
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
@@ -62,14 +84,16 @@ class Mob(pygame.sprite.Sprite):
         self.rot_speed = random.randrange(-8, 8)
         self.last_update = pygame.time.get_ticks()
 
-    def update(self):
-        self.rotate()
-        self.rect.x += self.speedx
-        self.rect.y += self.speedy
-        if self.rect.top > HEIGHT + 10 or self.rect.left < -25 or self.rect.right > WIDTH + 20:
-            self.rect.x = random.randrange(WIDTH - self.rect.width)
-            self.rect.y = random.randrange(-100, -40)
-            self.speedy = random.randrange(1, 8)
+    def rotate(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > 50:
+            self.last_update = now
+            self.rot = (self.rot + self.rot_speed) % 360
+            new_image = pygame.transform.rotate(self.image_orig, self.rot)
+            old_center = self.rect.center
+            self.image = new_image
+            self.rect = self.image.get_rect()
+            self.rect.center = old_center
     
     def rotate(self):
         now = pygame.time.get_ticks()
@@ -97,6 +121,15 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
+background = pygame.image.load(path.join(img_dir, "cosmos.png")).convert()
+background_rect = background.get_rect()
+player_img = pygame.image.load(path.join(img_dir, "ship.png")).convert()
+bullet_img = pygame.image.load(path.join(img_dir, "bullet.png")).convert()
+meteor_images = []
+meteor_list = ['meteor.png, meteor2.png'] 
+for img in meteor_list:
+    meteor_images.append(pygame.image.load(path.join(img_dir, img)).convert())
+
 all_sprites = pygame.sprite.Group()
 mods = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
@@ -115,22 +148,29 @@ while running:
             running = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                player.shoot()   
-
+                player.shoot()
     all_sprites.update()
 
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
-        for hit in hits:
-            m = Mob()
-            all_sprites.add(m)
-            mods.add(m)
+    for hit in hits:
+        m = Mob()
+        all_sprites.add(m)
+        mods.add(m)
 
-    hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_circle)
-    if hits:
-        running = False
+    hits = pygame.sprite.spritecollide(player, mobs, True, pygame.sprite.collide_circle)
+    for hit in hits:
+        player.shield -= hit.radius * 2
+        newmob()
+        if player.shield <= 0:
+            running = False
 
     screen.fill(BLACK)
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
+    draw_text(screen, str(score), 18, WIDTH / 2, 10)
+    draw_shield_bar(screen, 5, 5, player.shield)
 
-pygame.dispalay.flip()
+    pygame.dispalay.flip()
+
+
+pygame.quit()
