@@ -4,8 +4,8 @@ from os import path
 
 img_dir = path.join(path.dirname(__file__), 'img')
 
-WIDTH = 600
-HEIGHT = 720
+WIDTH = 1000
+HEIGHT = 1000
 FPS = 60
 
 WHITE = (255,) * 3
@@ -23,7 +23,7 @@ font_name = 'arial'
 
 pygame.init()
 pygame.mixer.init() 
-win = pygame.display.set_mode((HEIGHT, WIDTH))
+screen = pygame.display.set_mode((HEIGHT, WIDTH))
 pygame.display.set_caption("Welcome to the club buddy!")
 background_color = (0,) * 3
 
@@ -44,7 +44,7 @@ def newmob():
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.scale(player_img, (50,38))
+        self.image = pygame.transform.scale(player_img, (WIDTH, HEIGHT))     #(50,38))
         transColor = self.image.get_at((0, 0))
         self.image.set_colorkey(transColor) 
         self.rect = self.image.get_rect()
@@ -76,7 +76,7 @@ class Player(pygame.sprite.Sprite):
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image_orig = meteor_imges[0]
+        self.image_orig = meteor_images[0]
         transColor = self.image_orig.get_at((0, 0))
         self.image_orig.set_colorkey(transColor)
         self.image = self.image_orig.copy()
@@ -127,12 +127,12 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
-background = pygame.image.load( "cosmos.png").convert()
+background = pygame.image.load("cosmos.png").convert()
 background_rect = background.get_rect()
-player_img = pygame.image.load( "ship.png").convert()
-bullet_img = pygame.image.load( "bullet.png").convert()
+player_img = pygame.image.load("ship.png").convert()
+bullet_img = pygame.image.load("bullet.png").convert()
 meteor_images = []
-meteor_list = ['meteor3.png'] #'meteor2.png'] 
+meteor_list = ['meteor.png', 'meteor2.png'] 
 for img in meteor_list:
     meteor_images.append(pygame.image.load(img).convert())
 
@@ -176,7 +176,7 @@ while running:
     draw_text(screen, 'arial', str(score), 18, WIDTH / 2, 10)
     #draw_shield_bar(screen, 5, 5, player.shield)
 
-    pygame.dispalay.update()
+    pygame.display.update()
 
 
 pygame.quit()
