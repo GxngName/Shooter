@@ -15,14 +15,16 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 
+score = 0
+font_name = 'arial'
 pygame.init()
 pygame.mixer.init() 
-win = pygame.display.set_mode((HEIGHT, WIDTH))
+screen = pygame.display.set_mode((HEIGHT, WIDTH))
 pygame.display.set_caption("Welcome to the club buddy!")
 background_color = (0,) * 3
-
-def draw_text(surf, text, size, x, y):
-    font = pygame.font.Font(font_name, size)
+clock = pygame.time.Clock()
+def draw_text(surf, font_name, text, size, x, y):
+    font = pygame.font.SysFont(font_name, size)
     text_surface = font.render(text, True, WHITE)
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x, y)
@@ -38,7 +40,7 @@ def newmob():
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.scale(self.image, (50,38))
+        self.image = pygame.transform.scale(player_img, (50,38))
         transColor = self.image.get_at((0, 0))
         self.image.set_colorkey(transColor) 
         self.rect = self.image.get_rect()
@@ -70,7 +72,7 @@ class Player(pygame.sprite.Sprite):
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image_orig = meteor_img
+        self.image_orig = meteor_images[0]
         transColor = self.image_orig.get_at((0, 0))
         self.image_orig.set_colorkey(transColor)
         self.image = self.image_orig.copy()
@@ -79,7 +81,7 @@ class Mob(pygame.sprite.Sprite):
         self.rect.x = random.randrange(WIDTH - self.rect.width)
         self.rect.y = random.randrange(-150, -100)
         self.speedy = random.randrange(1, 8)
-        self.speedx = random.randrange(-3, -3)
+        self.speedx = random.randrange(-3, 3)
         self.rot = 0
         self.rot_speed = random.randrange(-8, 8)
         self.last_update = pygame.time.get_ticks()
@@ -121,24 +123,24 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
-background = pygame.image.load(path.join(img_dir, "cosmos.png")).convert()
+background = pygame.image.load('cosmos.png').convert()
 background_rect = background.get_rect()
-player_img = pygame.image.load(path.join(img_dir, "ship.png")).convert()
-bullet_img = pygame.image.load(path.join(img_dir, "bullet.png")).convert()
+player_img = pygame.image.load("ship.png").convert()
+bullet_img = pygame.image.load("bullet.png").convert()
 meteor_images = []
-meteor_list = ['meteor.png, meteor2.png'] 
+meteor_list = ['meteor.png', 'meteor2.png'] 
 for img in meteor_list:
-    meteor_images.append(pygame.image.load(path.join(img_dir, img)).convert())
+    meteor_images.append(pygame.image.load(img).convert())
 
 all_sprites = pygame.sprite.Group()
-mods = pygame.sprite.Group()
+mobs = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 for i in range(8):
     m = Mob()
     all_sprites.add(m)
-    mods.add(m)
+    mobs.add(m)
 
 running = True
 while running:
@@ -155,7 +157,7 @@ while running:
     for hit in hits:
         m = Mob()
         all_sprites.add(m)
-        mods.add(m)
+        mobs.add(m)
 
     hits = pygame.sprite.spritecollide(player, mobs, True, pygame.sprite.collide_circle)
     for hit in hits:
@@ -167,10 +169,10 @@ while running:
     screen.fill(BLACK)
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
-    draw_text(screen, str(score), 18, WIDTH / 2, 10)
-    draw_shield_bar(screen, 5, 5, player.shield)
+    draw_text(screen, 'arial', str(score), 18, WIDTH / 2, 10)
+    #draw_shield_bar(screen, 5, 5, player.shield)
 
-    pygame.dispalay.flip()
+    pygame.display.update()
 
 
 pygame.quit()
