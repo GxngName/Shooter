@@ -19,7 +19,6 @@ pygame.init()
 pygame.mixer.init() 
 screen = pygame.display.set_mode((HEIGHT, WIDTH))
 pygame.display.set_caption("Welcome to the club buddy!")
-background_color = (0,) * 3
 clock = pygame.time.Clock()
    
 def draw_text(surf, font_name, text, size, x, y):
