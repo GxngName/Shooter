@@ -112,7 +112,7 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = bullet_img
-        self.image.set_colorkey(BLACK)
+        #self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
@@ -165,7 +165,7 @@ for hit in hits:
     if hits:
         running = False
 
-    #screen.fill(BLACK)
+    screen.fill(BLACK)
     screen.blit(background, background_rect)
     all_sprites.draw(screen)
     draw_text(screen, 'arial', str(score), 18, WIDTH / 2, 10)
@@ -173,7 +173,6 @@ for hit in hits:
     pygame.display.update()
 
 
- 
 pygame.init()
 
 win_size = 700
