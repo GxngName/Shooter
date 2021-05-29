@@ -15,6 +15,8 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 
+font_name = pygame.font.match_font('arial')
+
 pygame.init()
 pygame.mixer.init() 
 screen = pygame.display.set_mode((HEIGHT, WIDTH))
@@ -112,7 +114,7 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = bullet_img
-        #self.image.set_colorkey(BLACK)
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.bottom = y
         self.rect.centerx = x
@@ -212,7 +214,7 @@ while True:
                 menu(win)
 
     win.fill(background_color)
-
+    
     pygame.display.update()
 
 pygame.quit()
